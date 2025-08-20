@@ -1,0 +1,77 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set seaborn style
+sns.set(style="whitegrid")
+
+# -----------------------------
+# Step 1: Create DataFrame from your snippet
+# -----------------------------
+data = {
+    'ph': [None, 3.716080, 8.099124, 8.316766, 9.092223],
+    'Hardness': [204.890455, 129.422921, 224.236259, 214.373394, 181.101509],
+    'Solids': [20791.318981, 18630.057858, 19909.541732, 22018.417441, 17978.986339],
+    'Chloramines': [7.300212, 6.635246, 9.275884, 8.059332, 6.546600],
+    'Sulfate': [368.516441, None, None, 356.886136, 310.135738],
+    'Conductivity': [564.308654, 592.885359, 418.606213, 363.266516, 398.410813],
+    'Organic_carbon': [10.379783, 15.180013, 16.868637, 18.436524, 11.558279],
+    'Trihalomethanes': [86.990970, 56.329076, 66.420093, 100.341674, 31.997993],
+    'Turbidity': [2.963135, 4.500656, 3.055934, 4.628771, 4.075075],
+    'Potability': [0, 0, 0, 0, 0]
+}
+
+df = pd.DataFrame(data)
+
+# -----------------------------
+# Step 2: Check for missing values
+# -----------------------------
+plt.figure(figsize=(10, 6))
+sns.heatmap(df.isnull(), cbar=False, cmap='viridis')
+plt.title("Missing Values Heatmap")
+plt.show()
+
+# -----------------------------
+# Step 3: Drop rows with missing values for plotting
+# -----------------------------
+df_clean = df.dropna()
+
+# -----------------------------
+# Step 4: Plot histograms for numeric features except Potability
+# -----------------------------
+features = df_clean.columns.drop('Potability')
+
+df_clean[features].hist(figsize=(15, 10), bins=20, edgecolor='black')
+plt.suptitle("Histograms of Water Quality Features", fontsize=16)
+plt.tight_layout()
+plt.show()
+
+# -----------------------------
+# Step 5: Correlation heatmap
+# -----------------------------
+plt.figure(figsize=(10, 8))
+sns.heatmap(df_clean.corr(), annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Correlation Heatmap")
+plt.show()
+
+# -----------------------------
+# Step 6: Boxplots to compare each feature by Potability
+# -----------------------------
+for feature in features:
+    plt.figure(figsize=(7, 4))
+    sns.boxplot(x='Potability', y=feature, data=df_clean)
+    plt.title(f"{feature} vs Potability")
+    plt.tight_layout()
+    plt.show()
+
+# -----------------------------
+# Step 7: Count plot of Potability
+# -----------------------------
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Potability', data=df)
+plt.title("Potability Counts")
+plt.xlabel("Potability (0 = Not Potable, 1 = Potable)")
+plt.ylabel("Count")
+plt.show()
+
+
